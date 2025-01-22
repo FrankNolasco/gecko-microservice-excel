@@ -11,7 +11,7 @@
 	<groupId>com.geckofull</groupId>
 	<artifactId>excelcodifier</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<packaging>war</packaging>
+	<packaging>jar</packaging>
 	<name>excelcodifier</name>
 	<description>Microservicio para manejar archivos excel de manera segura</description>
 	<url/>
