@@ -10,9 +10,7 @@ import com.geckofull.excelcodifier.models.sigeh.Turno;
 import com.geckofull.excelcodifier.models.sigeh.Turnos;
 import com.geckofull.excelcodifier.utils.excel.TablaUtils;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 
 public class TratamientoTablaRoles {
@@ -111,19 +109,35 @@ public class TratamientoTablaRoles {
 
     public List<TablaRoles> generarTablaRoles(List<TablaConCabecera> tablasConCabeceras) {
 
-        List<TablaRoles> tablasRoles = new ArrayList<>();
+        Map<String, TablaRoles> tablasPorHoja = new HashMap<>();
+
         for (TablaConCabecera tablaConCabecera : tablasConCabeceras) {
+            String hoja = tablaConCabecera.getHoja();
             List<Grupo> grupos = tablaConCabecera.getGrupos();
             List<PersonaRol> personasRoles = obtenerPersonasRoles(grupos, tablaConCabecera.getCabecera());
-            TablaRoles tablaRoles = new TablaRoles();
-            tablaRoles.setHoja(tablaConCabecera.getHoja());
-            tablaRoles.setPersonas(personasRoles);
-            tablaRoles.setId(tablasRoles.size());
-            tablaRoles.setEsValida(tablaConCabecera.getDatos().size() % 3 == 0);
-            tablasRoles.add(tablaRoles);
-        }
-        return tablasRoles;
 
+            // Si ya existe una TablaRoles para esta hoja, combinar personas
+            if (tablasPorHoja.containsKey(hoja)) {
+                TablaRoles tablaExistente = tablasPorHoja.get(hoja);
+                tablaExistente.getPersonas().addAll(personasRoles); // Unir personas
+            } else {
+                // Crear una nueva TablaRoles para esta hoja
+                TablaRoles nuevaTabla = new TablaRoles();
+                nuevaTabla.setHoja(hoja);
+                nuevaTabla.setPersonas(new ArrayList<>(personasRoles));
+                nuevaTabla.setId(tablasPorHoja.size()); // ID basado en el tamaño actual del mapa
+                nuevaTabla.setEsValida(tablaConCabecera.getDatos().size() % 3 == 0);
+                tablasPorHoja.put(hoja, nuevaTabla);
+            }
+        }
+
+        // Convertir el mapa a lista y ordenar por ID
+        List<TablaRoles> tablasRoles = new ArrayList<>(tablasPorHoja.values());
+        tablasRoles.sort(Comparator.comparingInt(TablaRoles::getId));
+
+        return tablasRoles;
     }
+
+
 
 }

@@ -40,7 +40,6 @@ public class TratamientoTablaRolesService {
             return tratamientoTablas.generarTablaRoles(tablasConTratamiento);
             //return tablasConTratamiento;
         }   catch (Exception e) {
-            e.printStackTrace();
             return null;
         }
     }
