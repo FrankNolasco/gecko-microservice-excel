@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.text.DecimalFormat;
 import java.util.*;
 
 @Component
@@ -82,11 +83,28 @@ public class ExcelReader {
         return filaDatos;
     }
 
+
     private Object obtenerValorCelda(Cell cell) {
-        return switch (cell.getCellType()) {
-            case STRING -> cell.getStringCellValue().trim();
-            case NUMERIC -> cell.getNumericCellValue();
-            default -> "";
-        };
+        DecimalFormat decimalFormat = new DecimalFormat("#"); // Formato sin notación científica
+        decimalFormat.setMaximumFractionDigits(0); // Sin decimales
+
+        try {
+            // Intentar obtener como texto primero
+            return cell.getStringCellValue().trim();
+        } catch (IllegalStateException e) {
+            try {
+                double numericValue = cell.getNumericCellValue();
+
+                // Si tiene 5 o más dígitos, formatearlo como cadena
+                if (numericValue >= 10000 || numericValue <= -10000) {
+                    return decimalFormat.format(numericValue);
+                }
+
+                return numericValue; // Si no, devolver como número
+            } catch (Exception ex) {
+                return cell.toString(); // Último recurso: obtener valor genérico
+            }
+        }
     }
+
 }
