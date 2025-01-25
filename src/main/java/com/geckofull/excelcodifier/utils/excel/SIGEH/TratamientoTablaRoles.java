@@ -54,6 +54,10 @@ public class TratamientoTablaRoles {
         return grupos;
     }
 
+    private String obtenerValor(Fila filaPersona, Fila cabecera, String columna) {
+        return TablaUtils.obtenerCeldaPorNombreColumna(filaPersona, cabecera, columna).getValor().toString();
+    }
+
 
     public List<PersonaRol> obtenerPersonasRoles(List<Grupo> grupos, Fila cabecera) {
         List<PersonaRol> personasRoles = new ArrayList<>();
@@ -64,14 +68,20 @@ public class TratamientoTablaRoles {
 
             Fila filaPersona = grupo.get(0);
             PersonaRol personaRol = new PersonaRol();
-            personaRol.setServicio(TablaUtils.obtenerCeldaPorNombreColumna(filaPersona, cabecera, "SERVICIO").getValor().toString());
-            personaRol.setNombreCompleto(TablaUtils.obtenerCeldaPorNombreColumna(filaPersona, cabecera, "APELLIDOS Y NOMBRES").getValor().toString());
-            personaRol.setMes(TablaUtils.obtenerCeldaPorNombreColumna(filaPersona, cabecera, "MES").getValor().toString());
-            personaRol.setAnio(TablaUtils.obtenerCeldaPorNombreColumna(filaPersona, cabecera, "AÑO").getValor().toString());
-            personaRol.setCargo(TablaUtils.obtenerCeldaPorNombreColumna(filaPersona, cabecera, "CARGO").getValor().toString());
-            personaRol.setNumDocumento(TablaUtils.obtenerCeldaPorNombreColumna(filaPersona, cabecera, "N° Documento").getValor().toString());
-            personaRol.setCondicionLaboral(TablaUtils.obtenerCeldaPorNombreColumna(filaPersona, cabecera, "CONDICION LABORAL").getValor().toString());
-            personaRol.setObservaciones(TablaUtils.obtenerCeldaPorNombreColumna(filaPersona, cabecera, "OBSERVACIONES").getValor().toString());
+            personaRol.setServicio(obtenerValor(filaPersona, cabecera, "SERVICIO"));
+            personaRol.setNombreCompleto(obtenerValor(filaPersona, cabecera, "APELLIDOS Y NOMBRES"));
+            personaRol.setMes(obtenerValor(filaPersona, cabecera, "MES"));
+            personaRol.setAnio(obtenerValor(filaPersona, cabecera, "AÑO"));
+            personaRol.setCargo(obtenerValor(filaPersona, cabecera, "CARGO"));
+            String numDocumento = obtenerValor(filaPersona, cabecera, "N° Documento");
+            // Completar con ceros a la izquierda si la longitud del número de documento es menor a 8
+            if (numDocumento.length() < 8) {
+                numDocumento = String.format("%0" + (8 - numDocumento.length()) + "d%s", 0, numDocumento);
+            }
+            personaRol.setNumDocumento(numDocumento);
+            personaRol.setNumDocumento(numDocumento);
+            personaRol.setCondicionLaboral(obtenerValor(filaPersona, cabecera, "CONDICION LABORAL"));
+            personaRol.setObservaciones(obtenerValor(filaPersona, cabecera, "OBSERVACIONES"));
 
             // Para agregar los turnos es necesario recorrer las 3 filas del grupo
             // los turnos son todos los valores de las filas cuyo índice de columna corresponde a una cabecera cuyo valor es de tipo double
