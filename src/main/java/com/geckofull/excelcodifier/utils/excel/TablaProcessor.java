@@ -71,18 +71,34 @@ public class TablaProcessor {
 
     private boolean esCabecera(Fila fila, List<String> cabecera) {
         if (fila.size() < cabecera.size()) {
-            return false;  // Si la fila tiene menos columnas que la cabecera, no es válida
+            return false; // Si la fila tiene menos columnas que la cabecera, no puede ser válida
         }
 
-        // Comparar cada celda de la fila con los valores esperados de la cabecera
+        // Lista para rastrear qué elementos de la cabecera han sido encontrados
+        boolean[] coincidencias = new boolean[cabecera.size()];
+
+        // Comparar cada valor de la cabecera con cada celda de la fila
         for (int i = 0; i < cabecera.size(); i++) {
             String valorCabecera = cabecera.get(i);
-            Object valorCelda = fila.get(i).getValor();
-            if (!ComparadorUtil.compararValor(valorCabecera, valorCelda)) {
+
+            // Buscar si el valor de la cabecera tiene un equivalente en cualquier celda de la fila
+            for (Celda celda : fila) {
+                Object valorCelda = celda.getValor();
+                if (ComparadorUtil.compararValor(valorCabecera, valorCelda)) {
+                    coincidencias[i] = true; // Marca esta cabecera como encontrada
+                    break; // No necesitamos seguir buscando para esta cabecera
+                }
+            }
+
+            // Si no se encontró coincidencia para esta cabecera, ya podemos devolver false
+            if (!coincidencias[i]) {
                 return false;
             }
         }
 
+        // Si todas las cabeceras fueron encontradas, devolver true
         return true;
     }
+
+
 }
