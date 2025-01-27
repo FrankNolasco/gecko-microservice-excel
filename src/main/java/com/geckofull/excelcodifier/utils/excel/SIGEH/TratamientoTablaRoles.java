@@ -8,12 +8,23 @@ import com.geckofull.excelcodifier.models.sigeh.PersonaRol;
 import com.geckofull.excelcodifier.models.sigeh.TablaRoles;
 import com.geckofull.excelcodifier.models.sigeh.Turno;
 import com.geckofull.excelcodifier.models.sigeh.Turnos;
+import com.geckofull.excelcodifier.services.TurnoService;
 import com.geckofull.excelcodifier.utils.excel.TablaUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.util.*;
 
-
+@Component
 public class TratamientoTablaRoles {
+
+    private final TurnoService turnoService;
+
+    @Autowired
+    public TratamientoTablaRoles(TurnoService turnoService) {
+        this.turnoService = turnoService;
+    }
+
 
     // TODO: Método para depurar las filas que no tienen valor en la columna "TURNO"
     public List<Fila> depurarPorTurno(List<Fila> tabla, Fila cabecera) {
@@ -101,7 +112,24 @@ public class TratamientoTablaRoles {
 
                         Turno turno = new Turno();
                         turno.setDia(String.valueOf(dia));
-                        turno.setValor(celdaTurno.getValor().toString());
+
+                        List<String> turnosDisponibles = turnoService.listarTurnosDisponibles();
+                        // Obtener el valor de celdaTurno
+                        String valorTurno = celdaTurno.getValor().toString();
+                        // Verificar si el valor es "m"
+                        if ("m".equals(valorTurno)) {
+                            // Si es "m", asignamos "m."
+                            turno.setValor("m.");
+                        } else {
+                            // Si no es "m", verificamos si está en la lista de turnos disponibles
+                            if (turnosDisponibles.contains(valorTurno)) {
+                                // Si el valor existe en la lista, lo asignamos
+                                turno.setValor(valorTurno);
+                            } else {
+                                // Si no existe en la lista, asignamos un valor vacío
+                                turno.setValor("");
+                            }
+                        }
                         turnosHijo.add(turno);
                     }
                 }

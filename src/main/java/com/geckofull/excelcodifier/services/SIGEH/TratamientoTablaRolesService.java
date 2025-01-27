@@ -1,13 +1,10 @@
 package com.geckofull.excelcodifier.services.SIGEH;
-import com.geckofull.excelcodifier.models.Celda;
 import com.geckofull.excelcodifier.models.Fila;
 import com.geckofull.excelcodifier.models.Grupo;
 import com.geckofull.excelcodifier.models.TablaConCabecera;
-import com.geckofull.excelcodifier.models.sigeh.CabeceraRol;
-import com.geckofull.excelcodifier.models.sigeh.CabecerasRoles;
 import com.geckofull.excelcodifier.models.sigeh.TablaRoles;
 import com.geckofull.excelcodifier.utils.excel.SIGEH.TratamientoTablaRoles;
-import com.geckofull.excelcodifier.utils.excel.TablaUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -19,9 +16,10 @@ public class TratamientoTablaRolesService {
 
     private final TratamientoTablaRoles tratamientoTablas;
 
-    public TratamientoTablaRolesService() {
+    @Autowired
+    public TratamientoTablaRolesService(TratamientoTablaRoles tratamientoTablas) {
         // Inicializamos la clase TratamientoTablas que contiene las reglas de tratamiento
-        this.tratamientoTablas = new TratamientoTablaRoles();
+        this.tratamientoTablas = tratamientoTablas;
     }
 
     // Metodo central para realizar todo el tratamiento de depuración
